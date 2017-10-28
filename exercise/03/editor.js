@@ -2,8 +2,8 @@ const {Menu, dialog} = require('electron').remote
 const fs = require('fs')
 
 function newFile() {
-  var filepath = document.getElementById('filepath')
-  filepath.innerText = ''
+  var filePath = document.getElementById('filePath')
+  filePath.innerText = ''
   var text = document.getElementById('text')
   text.value = ''
 }
@@ -11,11 +11,11 @@ function newFile() {
 function saveFileAs() {
   var text = document.getElementById('text')
   dialog.showSaveDialog({ 
-    filters: [ { name: '所有檔案', extensions: ['*'] }, { name: 'text', extensions: ['txt'] } ]}, 
+    filters: [ { name: 'All Files', extensions: ['*'] }, { name: 'text', extensions: ['txt'] } ]}, 
     function (fileName) {
       if (fileName === undefined) return;          
       fs.writeFile(fileName, text.value, function (err) {
-        dialog.showMessageBox({ message: "儲存完畢！", buttons: ["OK"] })
+        dialog.showMessageBox({ message: "Save successfully.", buttons: ["OK"] })
       })
       var filePath = document.getElementById('filePath')
       filePath.innerText = fileName
