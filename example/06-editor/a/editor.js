@@ -1,43 +1,82 @@
 const {Menu, dialog} = require('electron').remote
 const fs = require('fs')
 
+function newFile() {
+  var filepath = document.getElementById('filepath')
+  filepath.innerText = ''
+  var text = document.getElementById('text')
+  text.value = ''
+}
+
+function saveFileAs() {
+  var text = document.getElementById('text')
+  dialog.showSaveDialog({ 
+    filters: [ { name: '所有檔案', extensions: ['*'] }, { name: 'text', extensions: ['txt'] } ]}, 
+    function (fileName) {
+      if (fileName === undefined) return;          
+      fs.writeFile(fileName, text.value, function (err) {
+        dialog.showMessageBox({ message: "儲存完畢！", buttons: ["OK"] })
+      })
+      var filePath = document.getElementById('filePath')
+      filePath.innerText = fileName
+    })
+}
+
+function openFile() {
+  dialog.showOpenDialog(
+    function (fileName) {
+      if (fileName === undefined) {
+        console.log('No file selected')
+        return
+      }
+      console.log('fileName=' + fileName)
+
+      var filePath = document.getElementById('filePath')
+      filePath.innerText = fileName
+      fs.readFile(fileName.toString(), 'utf8', function (err, data) {
+        if (err) window.alert('read fail!')
+        var text = document.getElementById('text')
+        text.value = data
+      })
+    }
+  )
+}
+
+function saveFile() {
+  var fileName = document.getElementById('filePath').innerText
+//          if (fileName.trim().length === 0) window.alert('No file loaded!')
+  if (fileName.trim().length === 0) {
+    saveFileAs()
+  }
+  var text = document.getElementById('text')
+  fs.writeFile(fileName, text.value)
+}
+
 const template = [
   {
     label: 'File',
     submenu: [
       {
+        label: 'New',
+        accelerator: 'CmdOrCtrl+N',
+        click: newFile
+      },      
+      {
         label: 'Open',
         accelerator: 'CmdOrCtrl+O',
-        click: function () {
-          dialog.showOpenDialog(
-            function (fileName) {
-              if (fileName === undefined) {
-                console.log('No file selected')
-                return
-              }
-              console.log('fileName=' + fileName)
-
-              var filePath = document.getElementById('filePath')
-              filePath.innerText = fileName
-              fs.readFile(fileName.toString(), 'utf8', function (err, data) {
-                if (err) window.alert('read fail!')
-                var text = document.getElementById('text')
-                text.value = data
-              })
-            }
-          )
-        }
+        click: openFile
       },
       {
         label: 'Save',
         accelerator: 'CmdOrCtrl+S',
-        click: function () {
-          var fileName = document.getElementById('filePath').innerText
-          if (fileName.trim().length === 0) window.alert('No file loaded!')
-          var text = document.getElementById('text')
-          fs.writeFile(fileName, text.value)
-        }
-      }
+        click: saveFile
+      },
+      {
+        label: 'SaveAs',
+        accelerator: 'CmdOrCtrl+A',
+        click: saveFileAs
+      },
+      { label: 'Exit', role: 'close' }
     ]
   },
   {
