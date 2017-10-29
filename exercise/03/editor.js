@@ -3,7 +3,7 @@ const fs = require('fs')
 
 function newFile() {
   var filePath = document.getElementById('filePath')
-  filePath.innerText = ''
+  filePath.innerText = 'New File'
   var text = document.getElementById('text')
   text.value = ''
 }
@@ -45,7 +45,7 @@ function openFile() {
 function saveFile() {
   var fileName = document.getElementById('filePath').innerText
 //          if (fileName.trim().length === 0) window.alert('No file loaded!')
-  if (fileName.trim().length === 0) {
+  if (fileName.trim().length === 0 || fileName.trim() == 'New File') {
     saveFileAs()
   }
   var text = document.getElementById('text')
